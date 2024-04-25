@@ -1,17 +1,28 @@
 name: Apply Terraform Changes
-on:
-  workflow_dispatch:
+
+on:  # Define triggers for the workflow, e.g., push to main branch
+    workflow_dispatch
+
 jobs:
   terraform-apply:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Fetch latest code (optional)
+        run: git fetch origin main  # Update local copy with remote changes (adjust branch name if needed)
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: latest # Use the latest version of Terraform
-      - name: Terraform Init
+
+      - name: Terraform Init (to refresh local state)
         run: terraform init
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
+
+      - name: Terraform Plan (optional, recommended)
+        run: terraform plan
+
+      - name: Terraform Apply (with approval if needed)
+        run: terraform apply 
